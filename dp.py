@@ -51,46 +51,96 @@ start = time.time()
 # Use the backtracking matrix to find the optimal alignment 
 # To work with the printing functions below the best alignment should be called best_alignment and its score should be called best_score. 
 
-scoring_matrix = [["" for j in range(len(seq2)+1)] for i in range(len(seq1)+1)]
-backtrack_matrix = [["" for j in range(len(seq2)+1)] for i in range(len(seq1)+1)]
 
-def bt(i, j, x):
-    pass
 
 def c(i, j):
     if seq1[i] == seq2[j]:
-        return 2
+        return {"A":4, "C":3, "G":2, "T":1}[seq1[i]]
     else:
-        return -1
+        return -3
 
-def s(i, j):
-    print(i,j)
-    if i == 0:
-        return 2*j
-    elif j == 0:
-        return 2*i
-    ma = c(i,j) + s(i-1, j-1)
-    mb = s(i-1, j)-2
-    mc = s(i, j-1)-2
+x = len(seq1)
+y = len(seq2)
+scoring_matrix = [["" for i in range(x)] for j in range(y)]
+backtrack_matrix = [["" for i in range(x)] for j in range(y)]
 
-    print( ma, mb, mc)
-
-    if ma > mb and ma > mc:
-        bt(i,j, "D")
-        return ma
-    elif mb > ma and mb > mc:
-        bt(i, j, "U")
-        return mb
-    else:
-        bt(i, j, "L")
-        return mc
+for i in range(x):
+    scoring_matrix[0][i] = -2*i
+    backtrack_matrix[0][i] = "L"
+for i in range(y):
+    scoring_matrix[i][0] = -2*i
+    backtrack_matrix[i][0] = "U"
+backtrack_matrix[0][0] = "END"
 
 
 
-best_score = s(len(seq1)-1, len(seq2)-1)
+for i in range(1,x):
+    for j in range(1,y):
+
+        ma = c(i, j) + scoring_matrix[j-1][i-1]
+
+        mb = scoring_matrix[j][i-1]-2
+        mc = scoring_matrix[j-1][i]-2
+
+        maxsize = ma
+        biggest = 1
+        if mb>ma:
+            maxsize = mb
+            biggest = 2
+        if mc > maxsize:
+            maxsize = mc
+            biggest = 3
+        scoring_matrix[j][i] = maxsize
+
+        if biggest == 1:
+            backtrack_matrix[j][i] = "D"
+        elif biggest == 2:
+            backtrack_matrix[j][i] = "L"
+        else:
+            backtrack_matrix[j][i] = "U"
 
 
-best_alignment= ["AATT", "AATT"]
+
+best_score = scoring_matrix[y-1][x-1]
+
+a = ""
+b = ""
+
+i = x-1
+j = y-1
+
+
+while 1:
+    letter = backtrack_matrix[j][i]
+    if letter == "U":
+        a = " " + a
+        b = seq2[-1] + b
+        seq2 = seq2[:-1]
+        j -= 1
+    elif letter == "D":
+        a = seq1[-1] + a
+        b = seq2[-1] + b
+        seq1 = seq1[:-1]
+        seq2 = seq2[:-1]
+        i -= 1
+        j -= 1
+    elif letter == "L":
+        a = seq1[-1] + a
+        b = " " + b
+        seq1 = seq1[:-1]
+        i -= 1
+
+
+
+
+    elif letter == "END":
+        break
+    
+
+best_alignment= [a, b]
+
+
+
 
 
 #-------------------------------------------------------------
