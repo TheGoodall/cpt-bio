@@ -1,0 +1,26 @@
+digraph {
+	A
+	B
+	C
+	D
+	E
+	F
+	{
+		rank=same
+	}
+	AB
+	AB -> A [label=7.5]
+	AB -> B [label=7.5]
+	ABE
+	ABE -> E [label=12.0]
+	ABE -> AB [label=4.5]
+	CD
+	CD -> C [label=15.0]
+	CD -> D [label=15.0]
+	ABCDE
+	ABCDE -> ABE [label=6.0]
+	ABCDE -> CD [label=3.0]
+	ABCDEF
+	ABCDEF -> F [label=25.0]
+	ABCDEF -> ABCDE [label=7.0]
+}
